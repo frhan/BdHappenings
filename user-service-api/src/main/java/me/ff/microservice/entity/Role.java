@@ -1,11 +1,8 @@
 package me.ff.microservice.entity;
 
-import me.ff.microservice.entity.AbstractEntity;
-import me.ff.microservice.entity.UserDao;
 import org.springframework.security.core.GrantedAuthority;
 
 import javax.persistence.*;
-import java.util.List;
 import java.util.Set;
 
 
@@ -20,7 +17,7 @@ public class Role extends AbstractEntity implements GrantedAuthority {
     private boolean enabled;
 
     @OneToMany(cascade = CascadeType.ALL,mappedBy = "role",fetch = FetchType.EAGER)
-    private Set<UserDao> users;
+    private Set<ApplicationUser> users;
 
     public String getName() {
         return name;
@@ -38,7 +35,7 @@ public class Role extends AbstractEntity implements GrantedAuthority {
         this.enabled = enabled;
     }
 
-    public Set<UserDao> getUsers() {
+    public Set<ApplicationUser> getUsers() {
         return users;
     }
 
