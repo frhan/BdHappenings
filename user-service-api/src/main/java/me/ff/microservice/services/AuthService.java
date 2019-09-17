@@ -4,6 +4,7 @@ import me.ff.microservice.config.*;
 import me.ff.microservice.entity.ApplicationUser;
 import me.ff.microservice.entity.Role;
 import me.ff.microservice.entity.RoleName;
+import me.ff.microservice.exception.AppException;
 import me.ff.microservice.payload.ApiResponse;
 import me.ff.microservice.payload.JwtAuthenticationResponse;
 import me.ff.microservice.payload.LoginRequest;
@@ -26,22 +27,28 @@ import java.net.URI;
 @Service
 public class AuthService {
 
-    @Autowired
     private AuthenticationManager authenticationManager;
-
-    @Autowired
     ApplicationUserUserRepository userRepository;
-
-    @Autowired
     RoleRepository roleRepository;
-
-    @Autowired
     private PasswordEncoder passwordEncoder;
+    private JwtTokenProvider tokenProvider;
 
     @Autowired
-    JwtTokenProvider tokenProvider;
+    public AuthService(AuthenticationManager authenticationManager,
+                       ApplicationUserUserRepository userRepository,
+                       RoleRepository roleRepository,
+                       PasswordEncoder passwordEncoder,
+                       JwtTokenProvider tokenProvider) {
 
-    public ResponseEntity<?> authenticateUser(LoginRequest loginRequest){
+        this.authenticationManager = authenticationManager;
+        this.userRepository = userRepository;
+        this.roleRepository = roleRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.tokenProvider = tokenProvider;
+
+    }
+
+    public ResponseEntity<?> authenticateUser(LoginRequest loginRequest) {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         loginRequest.getUsernameOrEmail(),
@@ -56,13 +63,13 @@ public class AuthService {
     }
 
     public ResponseEntity<?> registerUser(SignUpRequest signUpRequest) {
-        if(userRepository.findByUserName(signUpRequest.getUsername()).isPresent()) {
+        if (userRepository.findByUserName(signUpRequest.getUsername()).isPresent()) {
             return new ResponseEntity(new ApiResponse(false, "Username is already taken!"),
                     HttpStatus.BAD_REQUEST);
         }
 
 
-        if(userRepository.findByEmail(signUpRequest.getEmail()).isPresent()) {
+        if (userRepository.findByEmail(signUpRequest.getEmail()).isPresent()) {
             return new ResponseEntity(new ApiResponse(false, "Email Address already in use!"),
                     HttpStatus.BAD_REQUEST);
         }

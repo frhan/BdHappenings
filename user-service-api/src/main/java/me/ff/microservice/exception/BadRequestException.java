@@ -1,4 +1,4 @@
-package me.ff.microservice.config;
+package me.ff.microservice.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
